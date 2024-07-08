@@ -1,36 +1,10 @@
 <template>
   <div>
-    <section
-      :class="`nav-bar fixed bg-black w-1/3 text-white h-screen transform transition-all duration-700 ${isActive ? 'right-0 ' : '-right-full'}`"
-    >
-      <div class="menu p-28 mt-11">
-        <h1 class="uppercase text-gray-400">Navigation</h1>
-        <div class="mt-3 mb-4 h-[2px] w-full bg-gray-700 opacity-50"></div>
-
-        <div class="flex flex-col gap-y-10">
-          <template v-for="(menu, index) in menus" :key="index">
-            <router-link
-              to=""
-              class="flex gap-x-3 items-center group text-7xl h-full asd"
-              :ref="(el) => (refs[index] = el)"
-            >
-              <div
-                class="dot w-[12px] h-[12px] bg-white rounded-full opacity-0 group-hover:opacity-100 transform transition-all"
-              ></div>
-              <span class="">
-                {{ menu.meta.label }}
-              </span>
-            </router-link>
-          </template>
-        </div>
-      </div>
-    </section>
-
     <div class="flex flex-row justify-between py-5 px-8 items-center">
       <div class="p-1" ref="title" @mousemove="onMove" @mouseleave="onLeave">
         <h1>tes aja</h1>
       </div>
-      <button class="relative group" @click="toggleActive">
+      <button class="relative group z-[1]" @click="toggleActive">
         <div
           :class="`relative flex overflow-hidden items-center justify-center rounded-full w-[70px] h-[70px] transform transition-all bg-slate-700 ring-0 ring-gray-300 hover:ring-8  ring-opacity-30 duration-200 shadow-md ${isActive ? 'ring-4' : ''}`"
         >
@@ -61,6 +35,30 @@
         </div>
       </button>
     </div>
+
+    <div :class="`nav-bar fixed bg-black text-white w-2/5 right-0 top-0 h-screen`">
+      <div class="menu p-28 mt-11">
+        <h1 class="uppercase text-gray-400">Navigation</h1>
+        <div class="mt-3 mb-4 h-[2px] w-full bg-gray-700 opacity-50"></div>
+
+        <div class="flex flex-col gap-y-10 menu-item">
+          <template v-for="(menu, index) in menus" :key="index">
+            <router-link
+              to=""
+              class="flex gap-x-3 items-center group text-7xl h-full asd"
+              :ref="(el) => (refs[index] = el)"
+            >
+              <div
+                class="dot w-[12px] h-[12px] bg-white rounded-full opacity-0 group-hover:opacity-100 transform transition-all"
+              ></div>
+              <p class="group-hover:tracking-widest transform transition-all">
+                {{ menu.meta.label }}
+              </p>
+            </router-link>
+          </template>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- <transitions ref="transition" /> -->
@@ -81,9 +79,36 @@ const toggleActive = () => {
   // setTimeout(() => {
   //   isActive.value = !isActive.value
   // }, 500)
-  tl.restart()
+  // tl.restart()
 
+  isActive.value ? tl.reverse() : tl.play()
   isActive.value = !isActive.value
+}
+
+onMounted(() => {
+  animationNavbar()
+})
+const refs = ref([])
+const animationNavbar = () => {
+  tl.from('.nav-bar', {
+    x: '100vw',
+    duration: 0.8,
+    ease: 'power4.inOut',
+    borderBottomLeftRadius: '100vw',
+    borderTopLeftRadius: '100vw'
+  })
+  refs.value.forEach((el, index) => {
+    tl.from(
+      el.$el,
+      {
+        x: '90vw',
+        duration: 0.3,
+        delay: index * 0.2,
+        ease: 'power4.inOut'
+      },
+      '>'
+    )
+  })
 }
 
 const menus = ref([
@@ -112,21 +137,6 @@ const menus = ref([
     // component: () => import('../views/AboutView.vue')
   }
 ])
-const refs = ref([])
-// onMounted(() => {
-//   initAnimationMenus()
-// })
-
-// function initAnimationMenus() {
-//   // Access the elements here
-//   refs.value.forEach((el, index) => {
-//     // console.log(`Element at index ${index}:`, el)
-//     // tl.from(el.$el, { x: 170, ease: 'easeInOut' })
-//     // tl.from('.asd', { scaleX: 1, transformOrigin: 'right', ease: 'easeInOut', duration: 1.5 })
-//     // gsap.to('.asd', { x: 100, duration: 1 })
-//     tl.fromTo(el.$el, { xPercent: 150 }, { xPercent: 0, ease: 'bounce', duration: 1, delay: 0.2 })
-//   })
-// }
 
 const title = ref(null)
 function onMove(e) {
